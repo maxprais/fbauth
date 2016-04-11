@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>FB Login</title>
+</head>
+<body>
+
+<p>Hi, Login to Facebook here:</p>
+<input type="button" value="Login">
+
+</body>
+<script>
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '572142882949200',
+      xfbml      : true,
+      version    : 'v2.5'
+    });
+  };
+
+  (function(d, s, id){
+     var js, fjs = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement(s); js.id = id;
+     js.src = "//connect.facebook.net/en_US/sdk.js";
+     fjs.parentNode.insertBefore(js, fjs);
+   }(document, 'script', 'facebook-jssdk'));
+</script>
+<script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
+<script src="../javascripts/client.js"></script>
+</html>
