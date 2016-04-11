@@ -12,37 +12,52 @@ var router = express.Router();
 var passport = require('passport');
 var FacebookStrategy = require('passport-facebook').Strategy;
 
-app.use(express.static(__dirname + '/public'));
-app.set('views', __dirname + '/public/views');
-app.engine('html', require('jade').renderFile);
-app.set('view engine', 'html');
+__dirname = '/Users/maxprais/Documents/dev/askaround/boaz/';
+
+// app.use(express.static(__dirname + '/public/views'));
+// app.set('views', __dirname + '/public/views');
+// console.log(__dirname);
+// app.engine('html', require('jade').renderFile);
+// app.set('view engine', 'html');
 
 app.use(bodyParser.urlencoded({
   extended: true
 }));
 app.use(bodyParser.json());
 
+app.use(express.static(__dirname + 'public/'));
 
-app.get('/', function (req, res) {
-       res.render('index');
+app.get('/login', function (req, res) {
+       res.sendFile(__dirname + 'public/views/index.html');
     });
 
 passport.use(new FacebookStrategy({
         clientID: '572142882949200',
         clientSecret: 'c517fe05925ff09486c7c62f85d64829',
-        callbackURL: "/redirect"
+        callbackURL: "http://localhost:8000/auth/facebook/redirect"
     },
     function(accessToken, refreshToken, profile, done) {
-        User.findOrCreate(profile, function(err, user) {
-            if (err) { return done(err); }
-            done(null, user);
-        });
+        console.log(profile);
     }
 ));
 
-app.get('/auth/facebook', passport.authenticate('facebook'));
+app.get('/auth/facebook',
+    passport.authenticate('facebook'));
 
-app.use('/', router);
+app.get('/auth/facebook/redirect',
+  passport.authenticate('facebook', { successRedirect: '/login',
+                                      failureRedirect: '/login' }
+  ));
+
+
+passport.serializeUser(function(user, done) {
+  done(null, user);
+});
+
+passport.deserializeUser(function(obj, done) {
+  done(null, obj);
+});
+
 
 app.listen(8000);
 
