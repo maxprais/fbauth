@@ -3,41 +3,49 @@
  */
 'use strict';
 
-var http = require('http');
-var fs = require('fs');
 var express = require('express');
 var app = express();
 var bodyParser = require('body-parser');
-var router = express.Router();
+var session = require('express-session');
 var passport = require('passport');
 var FacebookStrategy = require('passport-facebook').Strategy;
+var cookieParser = require('cookie-parser');
 
 __dirname = '/Users/maxprais/Documents/dev/askaround/boaz/';
 
-// app.use(express.static(__dirname + '/public/views'));
-// app.set('views', __dirname + '/public/views');
-// console.log(__dirname);
-// app.engine('html', require('jade').renderFile);
-// app.set('view engine', 'html');
+app.set('views', __dirname + 'views/');
+app.set('view engine', 'jade');
 
 app.use(bodyParser.urlencoded({
-  extended: true
+    extended: true
 }));
 app.use(bodyParser.json());
 
 app.use(express.static(__dirname + 'public/'));
 
-app.get('/login', function (req, res) {
-       res.sendFile(__dirname + 'public/views/index.html');
-    });
+app.use(cookieParser());
+app.use(passport.initialize());
 
+app.get('/login', function (req, res) {
+    res.render('index');
+    //res.sendFile(__dirname + 'public/views/index.html');
+});
+
+app.get('/', function (req, res) {
+    res.render('home', {name: name});
+    //res.sendFile(__dirname + 'public/views/home.html');
+});
+
+var name;
 passport.use(new FacebookStrategy({
         clientID: '572142882949200',
         clientSecret: 'c517fe05925ff09486c7c62f85d64829',
         callbackURL: "http://localhost:8000/auth/facebook/redirect"
     },
     function(accessToken, refreshToken, profile, done) {
-        console.log(profile);
+        console.log(profile['displayName']);
+        name = profile['displayName'];
+        done(null, profile);
     }
 ));
 
@@ -45,39 +53,21 @@ app.get('/auth/facebook',
     passport.authenticate('facebook'));
 
 app.get('/auth/facebook/redirect',
-  passport.authenticate('facebook', { successRedirect: '/login',
-                                      failureRedirect: '/login' }
-  ));
+    passport.authenticate('facebook', { successRedirect: '/',
+        failureRedirect: '/login' }
+    ));
 
 
 passport.serializeUser(function(user, done) {
-  done(null, user);
+    done(null, user);
 });
 
 passport.deserializeUser(function(obj, done) {
-  done(null, obj);
+    done(null, obj);
 });
 
 
 app.listen(8000);
 
 
-
-
-// http.createServer(function(request, response) {
-//     if (request.url === '/'){
-//         fs.readFile("../views/index.html", function(err, data){
-//             response.writeHead(200, {'Content-Type': 'text/html'});
-//             response.write(data);
-//             response.end();
-//         });
-//     }
-//
-//     else {
-//         response.writeHead(200, {'Content-Type': 'text/html'});
-//         response.write('<b>Hey there!</b><br /><br />This is the default response. Requested URL is: ' + request.url);
-//         response.end();
-//     }
-//
-// }).listen(8000);
 
