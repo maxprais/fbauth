@@ -10,18 +10,18 @@ var session = require('express-session');
 var passport = require('passport');
 var FacebookStrategy = require('passport-facebook').Strategy;
 var cookieParser = require('cookie-parser');
+var port = process.env.PORT || 8000;
+app.use(express.static('public'));
 
-__dirname = '/Users/maxprais/Documents/dev/askaround/boaz/';
-
-app.set('views', __dirname + 'views/');
+app.set('views', '../views/');
 app.set('view engine', 'jade');
+
 
 app.use(bodyParser.urlencoded({
     extended: true
 }));
 app.use(bodyParser.json());
 
-app.use(express.static(__dirname + 'public/'));
 
 app.use(cookieParser());
 app.use(passport.initialize());
@@ -67,7 +67,8 @@ passport.deserializeUser(function(obj, done) {
 });
 
 
-app.listen(8000);
+app.listen(port);
+console.log('Working on port: ' +  port);
 
 
 
