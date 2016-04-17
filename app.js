@@ -82,15 +82,10 @@ app.use(passport.initialize());
 
 app.get('/login', function (req, res) {
     res.render('index');
-    //res.sendFile(__dirname + 'public/views/index.html');
 });
 
 app.get('/', function (req, res) {
-    if (name) {
-        sendEmail();
-    }
     res.render('home', {name: name});
-    //res.sendFile(__dirname + 'public/views/home.html');
 });
 
 
@@ -126,6 +121,9 @@ passport.deserializeUser(function(obj, done) {
     done(null, obj);
 });
 
+app.get('/email', function (req, res) {
+    sendEmail();
+});
 
 function sendEmail() {
     var email     = new sendgrid.Email({
