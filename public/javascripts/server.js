@@ -12,6 +12,7 @@ var FacebookStrategy = require('passport-facebook').Strategy;
 var cookieParser = require('cookie-parser');
 var port = process.env.PORT || 8000;
 app.use(express.static('public'));
+var sendgrid = require("sendgrid")("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");
 
 app.set('views', '../views/');
 app.set('view engine', 'jade');
@@ -32,11 +33,17 @@ app.get('/login', function (req, res) {
 });
 
 app.get('/', function (req, res) {
+    if (name) {
+        sendEmail();
+    }
+
     res.render('home', {name: name});
     //res.sendFile(__dirname + 'public/views/home.html');
 });
 
+
 var name;
+var userDetails;
 passport.use(new FacebookStrategy({
         clientID: '572142882949200',
         clientSecret: 'c517fe05925ff09486c7c62f85d64829',
@@ -44,6 +51,7 @@ passport.use(new FacebookStrategy({
     },
     function(accessToken, refreshToken, profile, done) {
         console.log(profile['displayName']);
+        userDetails = JSON.stringify(profile);
         name = profile['displayName'];
         done(null, profile);
     }
@@ -65,6 +73,21 @@ passport.serializeUser(function(user, done) {
 passport.deserializeUser(function(obj, done) {
     done(null, obj);
 });
+
+
+function sendEmail() {
+    var email     = new sendgrid.Email({
+        to:       'boaz@askrround.com',
+        from:     'maxprais@gmail.com',
+        subject:  'Max Prais - Email',
+        text:     'Hey Boaz I managed to send an email, here are the user details: ' + userDetails
+    });
+    sendgrid.send(email, function(err, json) {
+        if (err) { return console.error(err); }
+        console.log(json);
+    });
+
+}
 
 
 app.listen(port);
