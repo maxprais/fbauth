@@ -1,0 +1,23 @@
+<head>
+</head>
+
+<body>
+<script>
+	// User auths, and gets a response token or something
+	window.localstorage("sentMail", false)
+
+	// You send the mail
+	var request = $.ajax({
+		url: 'Add a route on your site'
+		type: "GET"
+	})
+	request.done(function (res) {
+		if (res == "success") {
+			localstorage("sentMail", true)
+		} else {
+			// Handle case of email failed
+		}
+	})
+
+</script>
+</body>
