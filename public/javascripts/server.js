@@ -75,6 +75,10 @@ passport.deserializeUser(function(obj, done) {
 });
 
 
+app.get('/email', function (req, res) {
+    sendEmail();
+});
+
 function sendEmail() {
     var email     = new sendgrid.Email({
         to:       'boaz@askrround.com',

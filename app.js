@@ -1,74 +1,21 @@
+/**
+ * Created by maxprais on 11/04/2016.
+ */
 'use strict';
 
 var express = require('express');
 var app = express();
-var path = require('path');
-//var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var session = require('express-session');
 var passport = require('passport');
 var FacebookStrategy = require('passport-facebook').Strategy;
+var cookieParser = require('cookie-parser');
 var port = process.env.PORT || 8000;
-
+app.use(express.static('public'));
 var sendgrid = require("sendgrid")("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");
-// var routes = require('./routes/index');
-// var users = require('./routes/users');
 
-
-
-// view engine setup
-
-// app.set('views', 'public/views/');
-// app.set('view engine', 'jade');
-
-
-console.log(__dirname);
-app.set('views', (path.join(__dirname, 'public/views')));
+app.set('views', 'public/views/');
 app.set('view engine', 'jade');
-
-app.use(logger('dev'));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
-
-// app.use('/', routes);
-// app.use('/users', users);
-
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
-});
-
-// error handlers
-
-// development error handler
-// will print stacktrace
-if (app.get('env') === 'development') {
-  app.use(function(err, req, res, next) {
-    res.status(err.status || 500);
-    res.render('error', {
-      message: err.message,
-      error: err
-    });
-  });
-}
-
-// production error handler
-// no stacktraces leaked to user
-app.use(function(err, req, res, next) {
-  res.status(err.status || 500);
-  res.render('error', {
-    message: err.message,
-    error: {}
-  });
-});
-
-
 
 
 app.use(bodyParser.urlencoded({
@@ -84,9 +31,33 @@ app.get('/login', function (req, res) {
     res.render('index');
 });
 
+
+
 app.get('/', function (req, res) {
-    res.render('home', {name: name});
+    var name = '';
+    app.post('/getname', function (req, res) {
+        name = res.json('username');
+        console.log(name);
+    });
+    console.log(name);
+    res.render('home', {username: name});
 });
+
+
+
+app.post('/email', function (req, res) {
+    console.log('email');
+    res.send('success');
+    sendEmail();
+});
+
+app.get('/auth/facebook',
+    passport.authenticate('facebook'));
+
+app.get('/auth/facebook/redirect',
+    passport.authenticate('facebook', { successRedirect: '/',
+        failureRedirect: '/login' }
+    ));
 
 
 var name;
@@ -98,20 +69,26 @@ passport.use(new FacebookStrategy({
     },
     function(accessToken, refreshToken, profile, done) {
         console.log(profile['displayName']);
-        userDetails = JSON.stringify(profile);
-        name = profile['displayName'];
+        saveName(profile['displayName']);
+        sendName(profile['displayName']);
+
+        //userDetails = JSON.stringify(profile);
+        //name = profile['displayName'];
         done(null, profile);
     }
 ));
 
-app.get('/auth/facebook',
-    passport.authenticate('facebook'));
+function saveName(name){
+    return name;
+}
 
-app.get('/auth/facebook/redirect',
-    passport.authenticate('facebook', { successRedirect: '/',
-        failureRedirect: '/login' }
-    ));
-
+function sendName(name) {
+    app.post('/name', function (req, res) {
+        //console.log(name);
+        res.send(name);
+        return name
+    })
+}
 
 passport.serializeUser(function(user, done) {
     done(null, user);
@@ -121,13 +98,12 @@ passport.deserializeUser(function(obj, done) {
     done(null, obj);
 });
 
-app.get('/email', function (req, res) {
-    sendEmail();
-});
+
+
 
 function sendEmail() {
     var email     = new sendgrid.Email({
-        to:       'boaz@askrround.com',
+        to:       'maxprais@gmail.com',
         from:     'maxprais@gmail.com',
         subject:  'Max Prais - Email',
         text:     'Hey Boaz I managed to send an email, here are the user details: ' + userDetails
@@ -139,13 +115,9 @@ function sendEmail() {
 
 }
 
-module.exports = app;
 
 app.listen(port);
 console.log('Working on port: ' +  port);
-
-
-
 
 
 

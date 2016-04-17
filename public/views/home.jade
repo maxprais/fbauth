@@ -1,9 +1,11 @@
 extends layout
+block scripts
+  script(src="../javascripts/client.js")
 
 block content
-    - if (name)
-        p You are logged in as #{name}
+    - if (username)
+        p You are logged in as #{username}
     - else
         p You are not authorised
         p Click to go to login page
-        a(href='/login'): input(class='login-btn', type='button' value='Take Me There')
+        a(href='/login'): input(class='to-login-btn', type='button' value='Take Me There')
