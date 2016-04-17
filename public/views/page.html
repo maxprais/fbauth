@@ -4,11 +4,8 @@
 <body>
 <script>
 	// User auths, and gets a response token or something
-
-	window.localStorage("sentMail", false);
-
-	if (localStorage.sentMail) {
-		window.localStorage("sentMail", false)
+	if (typeof(localstorage.sentMail) !== "undefined") {
+		window.localstorage("sentMail", false)
 	}
 
 
