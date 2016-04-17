@@ -1,8 +1,9 @@
 'use strict';
 
 var express = require('express');
+var app = express();
 var path = require('path');
-var favicon = require('serve-favicon');
+//var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
@@ -15,7 +16,7 @@ var sendgrid = require("sendgrid")("SG.InXQtii1TgWJwvgRUebH8w.CDu1qo8za_ttmgRKyr
 // var routes = require('./routes/index');
 // var users = require('./routes/users');
 
-var app = express();
+
 
 // view engine setup
 
@@ -23,8 +24,8 @@ var app = express();
 // app.set('view engine', 'jade');
 
 
-
-app.set('views', path.join(__dirname, 'public/views'));
+console.log(__dirname);
+app.set('views', (path.join(__dirname, 'public/views')));
 app.set('view engine', 'jade');
 
 app.use(logger('dev'));
@@ -81,16 +82,10 @@ app.use(passport.initialize());
 
 app.get('/login', function (req, res) {
     res.render('index');
-    //res.sendFile(__dirname + 'public/views/index.html');
 });
 
 app.get('/', function (req, res) {
-    if (name) {
-        sendEmail();
-    }
-
     res.render('home', {name: name});
-    //res.sendFile(__dirname + 'public/views/home.html');
 });
 
 
@@ -126,6 +121,9 @@ passport.deserializeUser(function(obj, done) {
     done(null, obj);
 });
 
+app.get('/email', function (req, res) {
+    sendEmail();
+});
 
 function sendEmail() {
     var email     = new sendgrid.Email({
