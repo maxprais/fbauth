@@ -32,16 +32,17 @@ app.get('/login', function (req, res) {
 });
 
 
-
+var name;
 app.get('/', function (req, res) {
 
-    app.post('/getname', function (req, res) {
-        name = res.json('username');
-        console.log(name);
-    });
-     var name;
-    console.log(name);
-    res.render('home', {username: name});
+    for (var i = 0; i < userList.length; i++){
+        if (userList[i]['username'] === name){
+            var username = name;
+        }
+    }
+
+    console.log(username);
+    res.render('home', {username: username});
 });
 
 
@@ -61,8 +62,12 @@ app.get('/auth/facebook/redirect',
     ));
 
 
-var name;
-var userDetails;
+function UserDetails (username, details){
+    this.username = username;
+    this.details = details;
+}
+
+
 passport.use(new FacebookStrategy({
         clientID: '572142882949200',
         clientSecret: 'c517fe05925ff09486c7c62f85d64829',
@@ -70,13 +75,21 @@ passport.use(new FacebookStrategy({
     },
     function(accessToken, refreshToken, profile, done) {
         //console.log(profile['displayName']);
+        saveName(profile['displayName'], profile);
         sendName(profile['displayName']);
-
-        //userDetails = JSON.stringify(profile);
-        //name = profile['displayName'];
+        name = profile['displayName'];
         done(null, profile);
     }
 ));
+
+var userList = [];
+
+function saveName(name, profile){
+
+    var new_user = new UserDetails(name, profile);
+    userList.push(new_user);
+
+}
 
 function sendName(name) {
     app.get('/name', function (req, res) {

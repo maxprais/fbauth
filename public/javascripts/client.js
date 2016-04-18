@@ -7,22 +7,11 @@
 var userSession = {};
 
 (function (userSession) {
-    userSession.loggedIn = (function () {
-        if (localStorage.sentMail === true){
-            console.log(localStorage.sentMail);
-        }
-        else {
-            localStorage.setItem("sentMail", false);
-            // if (typeof localStorage.username === 'string'){
-            //
-            // }
 
-        }
-    })();
 
     userSession.sendEmail = function () {
 
-        if (localStorage.sentMail === 'false'){
+        if (localStorage.sentMail === false){
             $.ajax({
                 url: '/email',
                 type: "post",
@@ -39,6 +28,17 @@ var userSession = {};
         }
 
     };
+
+     userSession.loggedIn = (function () {
+        if (localStorage.sentMail === 'true'){
+            console.log(localStorage.sentMail);
+        }
+        else {
+            localStorage.setItem("sentMail", false);
+            userSession.sendEmail();
+
+        }
+    })();
 
     userSession.saveUserName = (function () {
 
