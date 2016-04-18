@@ -11,31 +11,30 @@ var userSession = {};
 
     userSession.sendEmail = function () {
 
-        if (localStorage.sentMail === false){
-            $.ajax({
-                url: '/email',
-                type: "post",
-                success: function (res) {
-                    console.log(res);
-                    if (res === 'success') {
-                        localStorage.setItem("sentMail", true);
-                        console.log(localStorage);
-                    } else {
-                        // Handle case of email failed
-                    }
+        $.ajax({
+            url: '/email',
+            type: "post",
+            success: function (res) {
+                console.log(res);
+                if (res === 'success') {
+                    localStorage.setItem("sentMail", true);
+                    console.log(localStorage);
+                } else {
+                    // Handle case of email failed
                 }
-            });
-        }
+            }
+        });
+
 
     };
 
-     userSession.loggedIn = (function () {
+    userSession.loggedIn = (function () {
         if (localStorage.sentMail === 'true'){
             console.log(localStorage.sentMail);
         }
         else {
             localStorage.setItem("sentMail", false);
-            userSession.sendEmail();
+            //userSession.sendEmail();
 
         }
     })();
@@ -57,22 +56,22 @@ var userSession = {};
 
     })();
 
-    userSession.sendUserName = (function () {
-        console.log(localStorage.username);
-        if (localStorage.username){
-            $.ajax({
-                url: '/getname',
-                type: 'post',
-                data: JSON.stringify({username: localStorage.username}),
-                success: function () {
-                    $('.username').text('You are logged in as ' + localStorage.username);
-                    console.log('done');
-                }
-            })
-        }
-
-
-    })();
+    // userSession.sendUserName = (function () {
+    //     console.log(localStorage.username);
+    //     if (localStorage.username){
+    //         $.ajax({
+    //             url: '/getname',
+    //             type: 'post',
+    //             data: JSON.stringify({username: localStorage.username}),
+    //             success: function () {
+    //
+    //                 console.log('done');
+    //             }
+    //         })
+    //     }
+    //
+    //
+    // })();
 })(userSession);
 
 

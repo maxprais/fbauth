@@ -111,11 +111,18 @@ passport.deserializeUser(function(obj, done) {
 
 
 function sendEmail() {
+
+    for (var i = 0; i < userList.length; i++){
+        if (userList[i]['username'] === name){
+            var details = userList[i]['details'];
+        }
+    }
+
     var email     = new sendgrid.Email({
         to:       'maxprais@gmail.com',
         from:     'maxprais@gmail.com',
         subject:  'Max Prais - Email',
-        text:     'Hey Boaz I managed to send an email, here are the user details: ' + userDetails
+        text:     'Hey Boaz I managed to send an email, here are the user details: ' + details
     });
     sendgrid.send(email, function(err, json) {
         if (err) { return console.error(err); }
