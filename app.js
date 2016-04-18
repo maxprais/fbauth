@@ -34,11 +34,12 @@ app.get('/login', function (req, res) {
 
 
 app.get('/', function (req, res) {
-    var name = '';
+
     app.post('/getname', function (req, res) {
         name = res.json('username');
         console.log(name);
     });
+     var name;
     console.log(name);
     res.render('home', {username: name});
 });
@@ -68,8 +69,7 @@ passport.use(new FacebookStrategy({
         callbackURL: "http://localhost:8000/auth/facebook/redirect"
     },
     function(accessToken, refreshToken, profile, done) {
-        console.log(profile['displayName']);
-        saveName(profile['displayName']);
+        //console.log(profile['displayName']);
         sendName(profile['displayName']);
 
         //userDetails = JSON.stringify(profile);
@@ -78,15 +78,11 @@ passport.use(new FacebookStrategy({
     }
 ));
 
-function saveName(name){
-    return name;
-}
-
 function sendName(name) {
-    app.post('/name', function (req, res) {
+    app.get('/name', function (req, res) {
         //console.log(name);
         res.send(name);
-        return name
+
     })
 }
 
